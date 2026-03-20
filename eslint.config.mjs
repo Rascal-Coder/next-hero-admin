@@ -1,6 +1,9 @@
+import typescriptPlugin from "@typescript-eslint/eslint-plugin";
+import tsParser from "@typescript-eslint/parser";
 import { defineConfig, globalIgnores } from "eslint/config";
 import nextVitals from "eslint-config-next/core-web-vitals";
 import nextTs from "eslint-config-next/typescript";
+import simpleImportSort from "eslint-plugin-simple-import-sort";
 
 const eslintConfig = defineConfig([
   ...nextVitals,
@@ -13,6 +16,44 @@ const eslintConfig = defineConfig([
     "build/**",
     "next-env.d.ts",
   ]),
+    // TypeScript + import 排序
+    {
+      files: ["**/*.ts", "**/*.tsx", "**/*.js", "**/*.mjs"],
+      languageOptions: {
+        parser: tsParser,
+        parserOptions: {
+          ecmaVersion: "latest",
+          sourceType: "module",
+          ecmaFeatures: {
+            jsx: true,
+          },
+        },
+      },
+      plugins: {
+        "@typescript-eslint": typescriptPlugin,
+        "simple-import-sort": simpleImportSort
+      },
+      rules: {
+        "import/order": "off",
+        "simple-import-sort/imports": [
+          "error",
+          {
+            groups: [
+              ["^\\u0000"], // 副作用 import（如 import "./x.css"）
+              ["^node:"], // Node 内置模块
+              ["^@?\\w"], // 第三方（含 @scope/pkg）
+              ["^@nestjs/"], // Nest.js
+              ["^@/"], // Next.js 路径别名 @/
+              ["^src/"], // 以 src/ 开头的路径
+              ["^\\."], // 相对路径
+            ],
+          },
+        ],
+        "simple-import-sort/exports": "error",
+        "no-duplicate-imports": "error",
+        "@typescript-eslint/no-unused-vars": ["warn", { argsIgnorePattern: "^_" }],
+      },
+    },
 ]);
 
 export default eslintConfig;

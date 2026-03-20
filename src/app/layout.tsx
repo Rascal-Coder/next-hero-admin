@@ -1,8 +1,10 @@
 // globals.css includes @tailwind directives
 // adjust the path if necessary
 import "@/styles/globals.css";
+
 import type { Metadata } from "next";
 import { JetBrains_Mono, Noto_Sans_SC } from "next/font/google";
+
 import { Providers } from "./providers";
 
 const notoSansSC = Noto_Sans_SC({
